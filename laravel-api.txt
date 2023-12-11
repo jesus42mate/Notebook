@@ -1,0 +1,35 @@
+
+# Laravel API by Jesus Saez ---
+
+--- Define Models and Resources ---
+
+Models are how the data is going to be saved and how the class where they are stored is going to look like.
+Resources are how we expose data to the outside world. Resources can interact with models and handle request/response logic.
+With models we model the data and map it to database tables.
+We use the Eloquent ORM to comunicate with the db. 
+
+Resources are tipically defined in separate PHP classes stored in the App/Http/Resources directory.
+Cada uno de los recursos representa un unico modelo o multiples modelos.
+
+--- Setting up Routes ---
+
+With routes we receive requests.
+
+Routes define how we [
+	POST resources from the database,
+	GET resources from the database,
+	DELETE resources from the database,
+	Get and return views,
+];
+	
+--- Handling Request and Responses ---
+
+--- Authentication and Authorization ---
+
+--- Validation and Error Handling ---
+
+--- Middleware and Filters ---
+
+--- Testing and Documentation ---
+
+

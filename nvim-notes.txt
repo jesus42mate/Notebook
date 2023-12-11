@@ -1,0 +1,5 @@
+
+Neovim notes by jesu42mate
+
+We can use Visual Mode (pressing V) and a/i to select everyting
+inside 

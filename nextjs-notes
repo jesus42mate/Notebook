@@ -1,0 +1,25 @@
+
+-- Notes by jesu42mate
+
+-- NEXT.JS
+Questions about the project arquitecture
+
+1. Are we using telemetry to collect data? 
+
+No usamos telemetria porque esa 
+data no se nos entrega a nosotros, sino a los vagos 
+de Next.js
+
+
+2. Why do we have the app inside src? Silly question, but curious
+
+Documentation-correct root structure for folders:
+
+Root
+--app
+--pages
+--public
+--src
+
+3. 
+

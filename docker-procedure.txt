@@ -1,0 +1,106 @@
+
+How Docker works in the front and back-end in Empatico
+
+Notes by jesu42mate
+
+-------------------------------------------------------------------------------
+							 --- Front-End ---
+-------------------------------------------------------------------------------
+
+Inside the Dockerfile, let's look at the first line:
+
+"ARG NODE_VERSION=18"
+
+Now, obviously this is setting a variable called NODE_VERSION to 18, but what is not so
+obvious is that this type of variables are used only at build time. 
+
+This kind of var's don't reveal information because they are not stored in the running
+container.
+
+They can't be used by other files that are not the Dockerfile itself, so the scope
+is limited too.
+
+This variables can have default values if none are provided on the Dockerfile.
+
+-------------------------------------------------------------------------------
+
+Now, let's dive a little bit further, into line 2.
+
+"FROM node:${NODE_VERSION}-alpine as builder"
+
+So.. what the hell is that? Well, a better question would be:
+"Is that creating a stage?"
+And the answer would be yes, it is.
+But knowing that a stage is buing built and knowing what a stage is are two 
+completly different things.
+
+So, what is a stage? In the context of Docker and multi-stage building, a
+stage would be a temporary environment used during the building of a 
+the final image.
+
+Why do we need to separate this building into different stages? Great question
+But first let's clarify something, stages have their own file systems, they carry 
+their own processes, separeted from the other stages, even tho they are all 
+contributing to the same final image.
+
+-------------------------------------------------------------------------------
+
+Key characteristics of a stage:
+-- Only the final stage contributes to the final image size
+
+-- Stages have their own commands and instructions
+
+-- It's possible to copy files from one stage into the next with:
+	COPY --from=(other stage name) (what) (to where)
+e.g COPY --from=builder usr/lib usr/lib
+
+-- Stages can have their own base image
+
+-------------------------------------------------------------------------------
+
+So to clarify, when we do FROM ... we are making Docker look for an image, either
+locally or in the Docker Hub, and in the case of the front end application, we are
+using the node 18 runtime image that comes with Alpine linux. (i think..)
+
+The RUN command is used to RUN commands in the current layer of our application.
+A layer is a snapshot of the current filesystem at a specific point in the 
+building of our application.
+
+-------------------------------------------------------------------------------
+
+"RUN mkdir -p usr/src/app" only creates a directory
+"WORDIR usr/src/app" sets the path as where the subsequent commands will take as 
+reference, so running COPY . 
+
+
+
+
+-------------------------------------------------------------------------------
+							 --- Back-End ---
+-------------------------------------------------------------------------------
+
+Let's understand the models in the back-end, one by one.
+
+All custom Models that you create can extend from Model (or not)
+
+---- App/Models/ClassroomConnectionChatConversation
+
+The CCCC uses the HasFactory and the SoftDeletes traits.
+HasFactory does...
+SoftDelete does...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

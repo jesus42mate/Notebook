@@ -1,0 +1,140 @@
+
+## Redux State Management Notes -- By jesu42mate
+
+# Basics
+
+Redux helps manage state. State in React is normally represented in a component as an object called state.
+Redux archieves this by managing state via events called 'actions'. It serves as a centralized store that spans across
+the entire application and can only be updated in a predictable fashion.
+
+This way we have a store that allows certain components access to perform actions such as updating, adding or removing
+items in it. This way, our components don't need state and have a centralized location to look for the data the need.
+
+A basic React app can therefore be divided into three parts:
+
+--	State	--> The current characteristics/condition of our app.
+--	UI		--> The grafical interface the user interacts with.
+--  Actions --> A function that updates the state of the application in the case an event happens that triggers it.
+
+Actions are generally referd to as Event Handlers.
+
+# State Management without Redux
+
+Every component can have a state, and to manage the state of multiple nodes, a process called 'lifting state up' was
+used, which involved getting the state of child nodes managed and kept by their parent nodes. This approach creates a ton
+of boilerplate and complicates the code. Since the state must then be passed from the parent to the childs when they are
+needed by a process called 'prop drilling'.
+
+
+# The Idea Behind Redux
+
+With Redux, we create a central store outside the component tree where the data can be extrated from. This takes the 
+responsibility from the components to keep and manage the data, as well as making it easier for nested childs to access
+the data they need. The first rule of Redux is that all state that can be modified in the application should be stored
+in an object called 'state' or 'state tree'.
+
+# Actors in the Updating and Reading of the Store's data.
+['reducer', 'components', 'ui']
+
+There a single class that can update the store's data, this is the 'reducer'. But how does the reducer know which data
+to edit? 
+The components can read data from the store, but cannot modify it, instead, they dispatch a note to the reducer on how
+to edit the store's data, and once the data is updated, the subscribers (the components) can update their UI accordingly.
+
+## Redux Terminologies
+
+# Action
+
+No one but the reducer can modify the app's state, neither the views nor the network callbacks can change it. Instead,
+they express the intent to transform the state.
+An action describes an event in the application. Something that has ocurred. It is a JS Object that is passed as a
+parameter to the store and holds the information required for the store to update to state.
+
+An action object has two properties, type and payload, the type specifies what happened and the payload sends data
+about what needs to be updated. For example, in a todo app:
+
+// action 1
+const addTodo = {
+	type: 'todos/TodoAdded',
+	payload: { todoID, newTodo },
+}
+
+// action 2
+const removeTodo = {
+	type: 'todos/TodoRemoved',
+	payload: { todoID },
+}
+
+# Action Creators
+
+Action Creators are function that return action objects, since they already have the actions boilerplate set up, they
+can receive certain parameters to quickly create an action object.
+
+const createTodo = (todo) => {
+	// return action
+	return {
+		type: 'todos/AddTodo',
+		payload: todo,
+	}
+}
+
+const removeTodo = (todoID, userID) => {
+	return {
+		type: 'todos/RemoveTodo',
+		payload: { todoID, userID },
+	}
+}
+
+## Reducers
+
+A Reducer is a pure function that takes two things as arguments, the current state of the application and the action to 
+be performed. After that, it returns the state after the action has been processed. A reducer is called a reducer
+in Redux, because it reduces actions into a single state.
+
+The reducer does not change the current state nor does it change the state of any other function.
+Which means:
+-- The reducer should not modify the state of the app, instead, it should copy the state and perform the action on the
+copied state and return that modified copied state.
+-- The reducer should NOT update the copied state by reading from a db.
+-- The reducer should NOT make any calls to a third party API.
+
+Syntax of a reducer function:
+const myReducer = (state, action) => newState;
+
+# Logic of a reducer function:
+
+In the body of the reducer function we check the action.type property.
+If the action.type property is equal to something we have defined, we apply given in the action.payload and return the new state object.
+If the action.type is not equal to something we have defined, we return the original state.
+
+The third rule of Redux says that when a state change is required, a function receiving the previous state and the action to be 
+performed is used, which returns the new state archieved after the action is performed.
+
+# Store
+
+A store is where we hold the entire state of the application.
+A store has three main methods, this are:
+
+-- get_state()
+
+returns the state of the whole application
+
+-- dispatch(action)
+
+performs an action based on the last state of the application
+
+-- subscribe(listener)
+
+the subscribe method allows components to listen for a change in data, so that a change in the UI can reflect that change.
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+
+---- Notes on InertiaJS ---- By jesu42mate
+
+Inertia JS is not necessarily a framework, it's glue that helps the developer get the backend and the front end frameworks work toguether.
+This is archived with the help of a concept known as adapters, it has three adapters for the main front-end frameoworks: React, Vue and Svelte.
+
+---- Under the hood ----
+
+You still use your back-ends routing, authentication, authorization, controllers, middleware.
+The only part you actually change is the View layer, where it is replaced by Inertia's view layer.
+Instead of using server side rending, your application returns JavaScript components, just like you would in your React/Vue/Svelte application. 
+Inertia is, essentially, a client-side routing library. It does this by using a wrapper on the regular anchor <a> tag. This wrapper is called
+a Link, and when a Link is clicked, Inertia intercepts the HTTP request and makes an XHR visit instead, preventing the page reload.
+When the server is signaled that an XHR visit has happened, instead of responding with an HTTP response, a JSON response is used, which sends the
+Javascript component name along with data (props).
+
+XHR is faster than HTTP, resulting in a more pleasant experience.
+
+---- The Protocol ----
+
+La primera call a una aplicacion usando Inertia es simplemente una HTTP. Sin ningun tipo de Header o datos especiales.
+Para estas requests, la respuesta del servidor es un HTML completo.
+La respuesta es un template junto con el root div, los estilos (CSS) y el JavaScript.
+En la primera request, nuestro root div viene con un atributo data-page, cuyo valor esta representado como un objeto JSON que trae las
+caracteristicas de nuestra pagina inicial. El comportamiento y los datos que vienen con el page object cambian cuando esta es en respuesta
+a una llamada HTTP o a una Link Visit. 
+
+A pesar de que la respuesta inicial es HTML, Inertia no renderiza en el servidor los componentes JavaScript.
+
+-- Page Object --
+
+Las caracteristicas que vienen con el Page Object son las siguiente cuatro:
+-Componente: 		El nombre del componente JavaScript de la pagina.
+-Propiedades:		Las propiedades de la pagina actual. 
+-URL:				La URL usada en la pagina actual.
+-Version:			La version utilizada.
+
+---- Respuestas de Inertia ----
+
+Luego de la primer respuesta, el sitio empieza a devolver respuestas con headers nuevos.
+- X-Requested-With		Denotando que la request fue hecha con XML
+- X-Inertia				Seteado a True para indicar que no es una llamada normal con una recarga de pagina completa.
+- X-Inertia-Version		Ni idea
+
+Una vez que Inertia lee el X-Inertia = True, las respuestas devueltas se vuelven un JSON, bajo el nombre de Page Object.
+En la primera request, se devuelve un HTML entero junto con el div root, que posee las caracteristicas de la app. Luego
+de la primera request, con cada Link Visit, el page object es devuelto como un Payload(?).
+
+---- Versionado de Assets ----
+
+Uno de los problemas de las Single Page Apps, es como lidiar con el cambio en el estado de nuestra pagina, una vez que
+estos son cambiados.
+Inertia intenta hacer esto un poco mas facil, al permitirnos opcionalmente trackear la version de los assets de la pagian y hacer una
+recarga total de la pagina(no una XHR) en el caso de que un evento haya hecho cambiar el numero/string/whatever de version.
+Este numero de version se encuentra en los datos enviados al root como uno de los elementos en el JSON de la data-page.
+Cuando se hace una request, Inertia automaticamente va a enviar la actual version de los assets en el Header bajo el 
+nombre X-Inertia-Version. 
+Cuando llegue una request, alguna seccion, normalmente en el middleware, de nuestro backend framework se encarga de checkear que la 
+version sea la misma en la X-Inertia-Version y en la version actual de los assets.
+
+---- Recargas Parciales ----
+
+Cuando hacemos una request a nuestro servidor, podemos optar por recibir solo una fraccion de los assets en el page object,
+esto solo es posible a partir de las visitas subsiguientes a el mismo componente, pero puede suponer un boost en la performance 
+considerable.
+
+---- Elementos Basicos ----
+
+-- Pages --
+
+Tipicamente cuando usamos Inertia nuestras paginas tienen sus propios controlladores/rutas y su componente JavaScript correspondiente.
+
+
+
+
+
+
+
+
+
