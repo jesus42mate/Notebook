@@ -1,6 +1,7 @@
 
 ## Redux State Management Notes -- By jesu42mate
 
+
 # Basics
 
 Redux helps manage state. State in React is normally represented in a component as an object called state.
@@ -18,6 +19,7 @@ A basic React app can therefore be divided into three parts:
 
 Actions are generally referd to as Event Handlers.
 
+
 # State Management without Redux
 
 Every component can have a state, and to manage the state of multiple nodes, a process called 'lifting state up' was
@@ -33,6 +35,7 @@ responsibility from the components to keep and manage the data, as well as makin
 the data they need. The first rule of Redux is that all state that can be modified in the application should be stored
 in an object called 'state' or 'state tree'.
 
+
 # Actors in the Updating and Reading of the Store's data.
 ['reducer', 'components', 'ui']
 
@@ -40,6 +43,7 @@ There a single class that can update the store's data, this is the 'reducer'. Bu
 to edit? 
 The components can read data from the store, but cannot modify it, instead, they dispatch a note to the reducer on how
 to edit the store's data, and once the data is updated, the subscribers (the components) can update their UI accordingly.
+
 
 ## Redux Terminologies
 
@@ -65,6 +69,7 @@ const removeTodo = {
 	payload: { todoID },
 }
 
+
 # Action Creators
 
 Action Creators are function that return action objects, since they already have the actions boilerplate set up, they
@@ -85,6 +90,7 @@ const removeTodo = (todoID, userID) => {
 	}
 }
 
+
 ## Reducers
 
 A Reducer is a pure function that takes two things as arguments, the current state of the application and the action to 
@@ -101,6 +107,7 @@ copied state and return that modified copied state.
 Syntax of a reducer function:
 const myReducer = (state, action) => newState;
 
+
 # Logic of a reducer function:
 
 In the body of the reducer function we check the action.type property.
@@ -110,12 +117,13 @@ If the action.type is not equal to something we have defined, we return the orig
 The third rule of Redux says that when a state change is required, a function receiving the previous state and the action to be 
 performed is used, which returns the new state archieved after the action is performed.
 
+
 # Store
 
 A store is where we hold the entire state of the application.
 A store has three main methods, this are:
 
--- get_state()
+-- getState()
 
 returns the state of the whole application
 
@@ -125,7 +133,62 @@ performs an action based on the last state of the application
 
 -- subscribe(listener)
 
-the subscribe method allows components to listen for a change in data, so that a change in the UI can reflect that change.
+The subscribe method allows components to listen for a change in data, so that a change in the UI can reflect that change.
+
+
+# How to create a Store in Redux
+
+// store.js
+
+// import your root reducer
+import rootReducer from "./rootReducer"
+
+// import createStore from Redux
+import {createStore} from "redux"
+
+// create the store
+const store = createStore(rootReducer)
+
+
+# Dispatch 
+
+Dispatch is used to send an action to our store. Using dispatch is the only way to change the state of our application.
+When a dispatch is called, it get's an action passed as an argument and that accion is the one that will get executed.
+(in the case where that action has been saved as a possible action on the store.js/store.ts)
+
+Whenever we need to change the state of our application from a certain component, we will use the dispatch method like so:
+
+const hashedPassword = sha256(password)
+store.dispatch({ type: "changePassword/changePassword", payload: { password: hashedPassword } })
+
+NOTE: Remember, the store is the one that holds all of the reducer functions, and will choose the correct one according to the 
+type specified in the action object, all the component has to do in order to modify the state (indirectly) is send the
+action through a dispatch method using the store object.
+
+
+# Selectors
+
+Selectors are function that facilitate the extraction of data from the state. They do so by receiving the state as a parameter
+and return the data defined when the selector was created.
+
+For example, to create a selector to extract the username and it's age:
+
+const usernameAndAgeSelector = (state) => {
+	const { username, age } = state.user;
+	return { username, age };
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

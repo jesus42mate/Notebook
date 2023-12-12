@@ -1,0 +1,112 @@
+---- Laravel Database Notes ---- By jesu42mate
+
+Este escrito es una traduccion con fines de estudio sin fines comerciales de ningun tipo.
+El texto original es parte de la documentacion oficial de Laravel en: https://laravel.com/docs/10.x/eloquent
+Para navegacion rapida, podes buscar los titulos con tu mecanismo de busqueda de preferencia.
+
+---- Index ----
+1. Convenciones de los modelos de Eloquent
+    1.1 Nombres de las tablas
+
+2. Llaves Primarias
+    2.1 Llaves primarias 'compuestas'
+
+3. LLaves UUid y ULID
+
+
+---- Convenciones de los modelos de Eloquent ----
+
+Los modelos generados con make:model van a ir dirigidos a App/Models.
+
+
+-- Nombres de las tablas --
+
+Por convencion, al crear un modelo sin especificar el nombre de la tabla que se utilizara, Eloquent automaticamente
+creara una con el nombre en snake_case, plural, en minusculas. Flight = flights, AirPositionController = air_position_controller.
+Si esto no se adapta a las convenciones de nuestra base de datos, es posible espeficiar el nombre de la tabla definiendo una 
+variable string llamada $table con el nombre que deseemos.
+
+class Flight extends Model {
+
+	// las anotaciones de tipo @var string son mas que nada para documentacion, no son requeridas por php.
+	@var string
+	protected $table = 'my_flights';
+}
+
+
+-- Llaves primarias --
+
+Eloquent automaticamente va a suponer que las tablas a las que nuestro modelo esta modelando van a tener una columna llamada id que
+funcionara como llave primaria, si necesitamos especificar algun tipo diferente de llave primaria, podriamos especificarla
+creando una variable protegida llamada primary_key.
+
+class Flight extends Model {
+
+	@var string
+	protected primary_key = "flight_id";
+}
+
+Es importante aclarar que Eloquent automaticamente intentara castear nuestra primary_key a un integer(entero), para prevenir esto
+cuando queremos utilizar un string o un valor no-numerico como pk, tendremos que setear una variable protegida $incrementing con
+un valor de false.
+
+Si elegimos una primary_key no numerica tambien debemos crearle una propiedad protegida 'keyType' a nuestro modelo y aclarar su
+tipo de dato, normalmente un string.
+
+class Flight extends Model {
+
+	@var bool 
+	protected $incrementing = false;
+
+	@var string
+	protected $keyType = 'string';
+}
+
+
+-- Llaves primarias 'compuestas' --
+
+Eloquent requiere que nuestros modelos tengan al menos una columna de tipo ID que cumpla la funcion de una primary_key para 
+identificar de manera unica a nuestros elementos. Si bien eloquent no permite tener multiples llaves primarias en nuestros
+modelos, es perfectamente aceptable tener una llave primaria no numerica junto con una ID para diferenciar a nuestros items. 
+
+
+---- Llaves UUID's y ULID ---- 
+
+Si por algun motivo no queremos utilizar enteros auto incrementables, tenemos la opciones de utilizar Universally Unique 
+alpha-numeric Identifiers de 36 caracteres de largo para reprensentar nuestras llaves primarias.
+Si deseamos utilizar esta manera de identificar a los elementos de nuestro modelo, podemos agregar el Trait 'HasUuids' de
+Illuminate\Database\Eloquent\Concerns\HasUuids y aplicarselo al modelo.
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Perros extends Model {
+	uses HasUuids;
+}
+
+Ahora si creamos un elemento y vemos su id, de la siguiente manera:
+
+  $romeo = Perro::create(['nombre' => 'Romeo']);
+
+Podemos ver que se crea con una UUID de 36 caracteres.
+
+  $romeo->id; "8f8e8478-9035-4d23-b9a7-62f4d2612ce5" 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
