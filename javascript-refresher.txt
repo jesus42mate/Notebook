@@ -1,0 +1,139 @@
+
+---- JavaScript Refresher ---- By jesu42mate
+
+In order to have a variable or anything available to other files, we need to export that thing.
+*e.g:
+export let apiKey = '1k5nas8d1n18wads';
+
+# And to import it, do:
+
+import { apiKey } from "./(file_name)";
+
+
+-- Default Exports --
+
+Since only one default export variable is allowed per file, when importing something something with a name that does not exist
+in the file we are importing from, the thing we are importing will be the default exported variable, for example:
+
+// there is no sendingCode variable being exported from the file we are importing from in this scenario.
+*e.g:
+import { sendingCode } from "../codes/SendingCodes";
+
+this sendingCode is the name we are giving to the default unnamed exported variable from the SendingCodes file. 
+Which looks like this:
+*e.g:
+export let type = "sendCode";
+export default = "915050jas05ivk0";
+
+
+-- Exporting Everything from a File --
+
+If we want to bring everything from a file, it is possible to extract everything from that file into a single object.
+
+import * as stuff from '../usefulStuff';
+
+We can the use the thing that are stored inside stuff.
+*e.g:
+console.log(stuff.name);
+console.log(stuff.apiKey);
+console.log(stuff.flightCode);
+
+for (let i = 0; i < stuff.userCodes.length; i++) {
+	console.log(stuff.userCodes[i]);
+}
+
+
+-- About the 'as' keyword --
+
+The 'as' keyword is usefull not only to group stuff into a single object for ease of importing, but it's also possible to
+bring things that are exported with a certain name with another name, more adapted to our use case.
+*e.g:
+import { dogName, dogOwnerName as dogOwner } from '../dogsInfo/dog1';
+
+
+---- Destructuring ----
+
+Destructuring is useful to avoid unnecesary code that might be annoying to repeat. For example:
+
+const array = ["Lol", "This can be better"];
+
+let first = array[0];
+let second = array[1];
+
+Can be changed to:
+const [first, second] = ["Lol", "This can be better"]; // now first and second have the corresponding values
+
+NOTE: When we use BRACKETS on the left side, they are for destructuring an array, when used on the right side,
+they are used to create an array. This behavior in the left side is specifically for arrays, for objects, 
+there is a different syntax.
+
+The same can be applied to objects. Take the following object: 
+
+const cat = {
+	name: "Tiger",
+	age: 5,
+};
+
+instead of doing: 
+let catName = cat.name;
+let catAge = cat.age;
+
+we could do:
+const { name, age } = {
+	name: "Tiger",
+	age: 5,
+};
+
+When we use destructuring on objects, the names are binded to the ones inside the object, so the same names should
+be used, but aliases can be created if we add : (alias)" to the definition. 
+*e.g:
+const { name: catName, age: catAge } = {
+	name: "Tiger",
+	age: 5,
+};
+
+
+-- Destructuring in function parameters --
+
+When we have a function that will receive an object as a parameter, it is important to realize that this object can
+(and most likely should) be destructured in order to take from it the properties that are important in that specific
+context, for example we might only need 3 properties, and by destructuring them we can automatically create locally
+scoped variables for our function's body to use.
+*e.g:
+const print_name_and_age_of_pet(pet: Pet) {
+	console.log(pet.name);
+	console.log(pet.age);
+}
+could be replaced by...
+const print_name_and_age_of_pet({ name, age }) {
+	console.log(name);
+	console.log(age);
+}
+
+which is certainly way cleaner.
+
+
+-- Constant Arrays can be modified? -- 
+
+constant arrays can get their items modified, for example, appended. Why is that? The answer is simple.
+What is constant about constant arrays is the address to which they are bounded to. It's not their size
+(in javascript.) that matters or the values of their items. 
+What is not allowed in constant arrays is therefore redefinition. Since we cannot change the address, 
+and it also does not allow size changes to that array, plus the fact that we cannot get a full copy of 
+the array when we copy it, the array can have some important limitation to it's use, retaining an 
+underlying concern of efficiency (since it stores memory contiguously).
+
+So, arrays can be modified. Their memory just doesn't change.
+
+
+
+
+
+
+
+
+
+
+
+
+

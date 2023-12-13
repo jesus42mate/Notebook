@@ -179,10 +179,7 @@ const usernameAndAgeSelector = (state) => {
 }
 
 
-
-
-
-
+# Illustration of the Redux Arquitechture 
 
 
 
