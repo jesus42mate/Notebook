@@ -3,3 +3,18 @@ Neovim notes by jesu42mate
 
 We can use Visual Mode (pressing V) and a/i to select everyting
 inside 
+
+If tree-sitter is not indenting your tsx code correctly, make sure that:
+
+require('nvim-treesitter.configs').setup({
+	indent = {
+		enable = true,
+	},
+	ensure_installed = { "typescript", "tsx" },
+})
+
+the indent config has enabled set to true.
+
+
+
+

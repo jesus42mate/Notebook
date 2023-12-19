@@ -1,3 +1,198 @@
 
 ---- React Basics ----
 
+
+-- Importing File into React
+
+In react, it is possible to import specific images with the import keyword. Which is not 
+regularly possible with normal JS. For example:
+
+import { Img } from "../imgs/Random_Image.jpg";
+
+
+---- Using functions as props ----
+
+When we want a certain component to execute code and do something specific, we can choose to 
+call a function with some property like onClick={}. This is real handy since it allows us to
+do things like:
+
+export default function MyButton() {
+	function printNum() {
+		console.log(5);
+	}
+
+	return(
+		<button onClick={ printNum }></button>
+	)
+	// This button would just print a number. But we want more!
+}
+
+This is passing the printNum function as a Value and not actually executing the function when
+the code is ran. It would execute the function immediately if we used printNum() in this case.
+On the other hand, if we wanted to know pass different arguments to the printNum function,
+we could actually return not a function, but an array function pointing to our function,
+this allows us to give the called function arguments, since the function wont get executed
+when our code is first compiled/ran.
+
+import default function myButton({onSelect}) {
+	function handleClick(num) {
+		console.log(num);
+	}
+	return(
+		<button onClick={ () => handleClick( {onSelect}) }></button>
+
+		// The handleClick kind of syntax is normally how this functions that deal with 
+		// how to respond to an action are tipically named.
+	)
+}
+
+
+---- React Hooks ----
+import { useState } from 'react';
+
+React hooks must be used solely inside components or other hooks, like custom hooks.
+There are two rules about hooks that are important to take into consideration when 
+working with hooks. 
+  1. Only use hooks inside components or other custom hooks.
+  2. Always have hooks at the beginning of the component, never inside an if
+    statement, never inside another nested function. Always at the beginning of
+	the component or hook.
+
+export default function MyComponent({dog, cat, owner}: MyComponentProps) {
+	const stateArray = useState('Click something!');
+}
+
+useState always yields an array with exactly two elements. The one with the current
+state of our saved object and a sort of setter function. We end up with something
+like this:
+
+export default function MyComponent({dog, cat, owner}: MyComponentProps) {
+	const [openedOption, setOpenedOption] = useState('Click something!');
+}
+
+
+---- Passing props to a component ----
+
+It is to be noted that it is possible to pass receive certain props in a component
+with destructuring while also storing all other passed props in a ...props element.
+Like so:
+export default function MyComp({ title, description, children, ...props}) {
+	return(
+		//  By setting all the rest of the properties (passed as props) as the properties
+			of one of the elements we are returning in the component, we can effectively
+			set any number of properties to the MyComp (like a className or an id) and
+			they will be applied to the element we want it to. This is specifically good
+			when creating a wrapper around another component.
+		<section {...props}>    <------------------------///
+			<h1>{title}</h1>
+
+			{children} // important! We can pass the children of the instance of the 
+							component as a property and return them! Else they will
+							not be showed!
+		</section>
+	)
+}
+
+So, before, when we decided to create a function that changes some state in our component,
+and passed that function as a property to our MyButton component, to be used in the 
+onClick built-in property of the <button> inside the MyButton component, we can actually 
+just pass the onClick property calling the function that changes the state to our MyButton
+as a property and have that prop be automatically added to the button. 
+
+default export function MyButton({ value, ...props}) {
+	return(
+		<button {...props}> { value } </button>
+	)
+}
+
+And in the code calling the function (App.tsx in this case..)
+...
+	<MyButton value="Click to change state" onClick={() => changeSomeState("SomeValue")}/>
+	
+Remember that when React renders our component, we don't want to execute the changeSomeState()
+function as soon as it is found, that is why we call it with an annonimous function.
+
+
+---- Using Components as Values, to pass as props for other Components ----
+
+Since JSX Components are values, they can be passed as props to components, in the example, 
+we want to pass a group of MyButton's to a Wrapper Component called Tabs. That will have both
+the buttons that should manage the state of the child being show, and the children nodes of 
+that Tabs component. 
+
+export default function Tabs({children, buttons}) {
+	return(<>
+		<menu>{buttons}</menu>
+		{children}
+	</>)
+}
+
+And in the calling code...
+
+function App() {
+	const [subject, changeSubject] = useState("None");
+	return(
+	<>
+		//  We do need to remember that Components in JSX are values but we cannot
+			return more than one element, which means we have to wrap what we are 
+			returning in another element.
+		<Tabs buttons={
+			<>
+				<MyButton onClick={() => changeSubject("Math")} />
+				<MyButton onClick={() => changeSubject("Cience")} />
+				<MyButton onClick={() => changeSubject("Art")} />
+			</>
+		}
+	</>
+	)
+}
+
+The main takeaway here tho, is not just about passing buttons or JSX components as values,
+it's the fact that we cannot easily use nested components sometimes, because they are altering
+some state that is beyond the general scope usecase of our (rehusable) Component. Since
+passing state would require a ton of properties to be added, and would at the same time make
+the Component less rehusable, we want it to remain as dumb as possible, and let the code calling
+manage the states and the stuff related to those buttons context.
+
+By passing all the buttons as a property, it's possible to render them within the component,
+while having their state be managed in the calling code!
+
+
+---- Passing A String Prop as an identifier ----
+
+If we want to have a container for our MyButton's passed as a property, react can receive a 
+string and identify what we are trying to do, for example, to pass a "menu" string as a prop,
+we can archieve the objective of passing what kind of tag we want our Components to be wrapped
+around, we would surround our buttons property with a specific <menu></menu> tag for example,
+but it's nice to know that we can actually have react interprete strings, take the following
+example.
+
+function App() {
+	return(
+		<Tabs buttons=**<> our buttons </>**
+			buttonContainer="menu"
+		>
+	)	// Notice we are passing a property called buttonContainer which is a string
+}
+
+export default function Tabs({ buttons, children, buttonContainer}) {
+	// Here we need to define our "Component" with the value stored in the 
+		buttonContainer prop.
+
+	const ButtonContainer = buttonContainer;
+
+	// This way, React will retain the value in the ButtonContainer and that value
+		will be used to represent the tag that we want to use to wrap the buttons
+		around.
+	// If instead we had chosen a buttonContainer name, react would have searched for
+		a primitive tag called buttonContainer, which of course, does not exist.
+
+	return(
+		// React will try to find a primitive tag with the name "menu" (the value stored
+			in ButtonContainer)
+		<ButtonContainer>{buttons}</ButtonContainer>	
+	)
+}
+
+
+
